@@ -1,0 +1,1368 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Bhūtasaṃkhyā Riddle - 20 Chamber Epic Deck</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Lato:wght@300;400;700&family=Yatra+One&display=swap"
+        rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Canvas Confetti Library for Grand Celebration -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        temple: {
+                            bg: '#070a14',
+                            card: '#0f172a',
+                            panel: '#1e293b',
+                            gold: '#fbbf24',
+                            amber: '#f59e0b',
+                            bronze: '#d97706',
+                            glow: 'rgba(245, 158, 11, 0.25)',
+                            cyan: '#38bdf8'
+                        }
+                    },
+                    fontFamily: {
+                        cinzel: ['Cinzel', 'serif'],
+                        yatra: ['Yatra One', 'serif'],
+                        lato: ['Lato', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #05070e;
+            color: #e2e8f0;
+            font-family: 'Lato', sans-serif;
+            overflow-x: hidden;
+            user-select: none;
+        }
+
+        /* Gold metallic text glow */
+        .gold-glow {
+            text-shadow: 0 0 15px rgba(251, 191, 36, 0.4), 0 0 30px rgba(245, 158, 11, 0.2);
+        }
+
+        /* Ambient temple canvas background */
+        #particleCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Stone Lock Key Slot Glow */
+        .lock-slot {
+            background: radial-gradient(circle, rgba(30, 41, 59, 1) 0%, rgba(15, 23, 42, 1) 100%);
+            box-shadow: inset 0 4px 10px rgba(0, 0, 0, 0.8), 0 0 15px rgba(245, 158, 11, 0.1);
+            transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        /* Dynamic Dial Spin Animation */
+        .dial-spin-up {
+            transform: translateY(-4px) scale(1.05);
+        }
+
+        .dial-spin-down {
+            transform: translateY(4px) scale(1.05);
+        }
+
+        /* Interactive Tag Highlight */
+        .word-tag {
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .word-tag:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+        }
+
+        /* Shimmer effect for buttons */
+        .btn-shimmer {
+            background: linear-gradient(135deg, #d97706 0%, #fbbf24 50%, #b45309 100%);
+            background-size: 200% auto;
+            transition: all 0.3s ease;
+        }
+
+        .btn-shimmer:hover {
+            background-position: right center;
+            box-shadow: 0 0 20px rgba(251, 191, 36, 0.5);
+            transform: scale(1.02);
+        }
+
+        /* Sliding Drawer for Codex */
+        .codex-drawer {
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #f59e0b;
+        }
+
+        /* Pulse animation for active clues */
+        @keyframes subtlePulse {
+
+            0%,
+            100% {
+                border-color: rgba(245, 158, 11, 0.4);
+                box-shadow: 0 0 10px rgba(245, 158, 11, 0.1);
+            }
+
+            50% {
+                border-color: rgba(245, 158, 11, 0.9);
+                box-shadow: 0 0 25px rgba(245, 158, 11, 0.3);
+            }
+        }
+
+        .active-pulse {
+            animation: subtlePulse 2s infinite;
+        }
+
+        /* Red Alarm Pulse for Wrong Answer */
+        @keyframes redAlertPulse {
+            0% {
+                background-color: rgba(239, 68, 68, 0.35);
+                box-shadow: 0 0 40px rgba(239, 68, 68, 0.6);
+            }
+
+            50% {
+                background-color: rgba(239, 68, 68, 0.15);
+                box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
+            }
+
+            100% {
+                background-color: rgba(15, 23, 42, 0.9);
+            }
+        }
+
+        .animate-red-alert {
+            animation: redAlertPulse 0.8s ease-in-out;
+        }
+
+        @keyframes heavyShake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            15%,
+            45%,
+            75% {
+                transform: translateX(-10px) rotate(-1deg);
+            }
+
+            30%,
+            60%,
+            90% {
+                transform: translateX(10px) rotate(1deg);
+            }
+        }
+
+        .animate-shake {
+            animation: heavyShake 0.5s ease-in-out;
+        }
+
+        /* Continuous Golden Pulse for Victory Screen */
+        @keyframes divineGlow {
+
+            0%,
+            100% {
+                transform: scale(1);
+                filter: drop-shadow(0 0 15px rgba(251, 191, 36, 0.4));
+            }
+
+            50% {
+                transform: scale(1.08);
+                filter: drop-shadow(0 0 35px rgba(251, 191, 36, 0.8));
+            }
+        }
+
+        .divine-pulse {
+            animation: divineGlow 3s ease-in-out infinite;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen flex flex-col justify-between relative overflow-hidden">
+
+    <!-- Ambient Particle Canvas -->
+    <canvas id="particleCanvas"></canvas>
+
+    <!-- RED ALARM OVERLAY FOR INCORRECT CODE -->
+    <div id="redFlashOverlay"
+        class="fixed inset-0 bg-red-600/20 pointer-events-none opacity-0 transition-opacity duration-300 z-40"></div>
+
+    <!-- TOP NAVIGATION & PRESENTATION HEADER -->
+    <header
+        class="relative z-10 w-full px-6 py-4 border-b border-slate-800/80 bg-slate-950/70 backdrop-blur-md flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+            <div
+                class="w-10 h-10 rounded-full bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 font-cinzel font-bold text-lg">
+                𑁍
+            </div>
+            <div>
+                <h1 class="font-cinzel text-xl font-bold text-amber-400 tracking-wider">BHŪTASAṂKHYĀ</h1>
+                <p class="text-xs text-slate-400 font-mono tracking-widest uppercase">Ancient Sanskrit Cryptogram Game
+                    (20 Chambers)</p>
+            </div>
+        </div>
+
+        <!-- Level Indicator Pills -->
+        <div class="hidden lg:flex items-center space-x-1.5 bg-slate-900/80 p-1.5 rounded-full border border-slate-800 max-w-xl overflow-x-auto"
+            id="levelProgressContainer">
+            <!-- Dynamic pills -->
+        </div>
+
+        <!-- Utility Buttons -->
+        <div class="flex items-center space-x-3">
+            <!-- Ambient Peaceful Drone Music Toggle -->
+            <button id="bgmToggleBtn" onclick="toggleBGM()"
+                class="px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 text-xs flex items-center space-x-2 transition">
+                <i class="fa-solid fa-music text-amber-400" id="bgmIcon"></i>
+                <span id="bgmLabel">Ambient Music OFF</span>
+            </button>
+
+            <button id="soundToggleBtn" onclick="toggleAudio()"
+                class="px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 text-xs flex items-center space-x-2 transition">
+                <i class="fa-solid fa-volume-high text-amber-400" id="soundIcon"></i>
+                <span id="soundLabel">SFX ON</span>
+            </button>
+
+            <button onclick="openCodex()"
+                class="px-4 py-1.5 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/40 text-amber-300 text-xs font-bold uppercase tracking-wider flex items-center space-x-2 transition shadow-sm">
+                <i class="fa-solid fa-book-bookmark text-amber-400"></i>
+                <span>Symbol Codex</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- MAIN GAME / PRESENTATION SLIDE STAGE -->
+    <main class="relative z-10 flex-grow flex items-center justify-center p-4 md:p-8 max-w-7xl mx-auto w-full">
+
+        <!-- STAGE CONTAINER -->
+        <div id="gameSlideStage"
+            class="w-full bg-slate-900/90 border border-slate-800/90 rounded-2xl shadow-2xl overflow-hidden backdrop-blur-xl relative min-h-[620px] flex flex-col justify-between transition-all duration-300">
+            <!-- Dynamic Slide Content -->
+        </div>
+
+    </main>
+
+    <!-- BOTTOM PRESENTATION CONTROLS -->
+    <footer
+        class="relative z-10 w-full px-6 py-3 border-t border-slate-800/80 bg-slate-950/80 backdrop-blur-md flex items-center justify-between text-xs text-slate-400">
+        <div class="flex items-center space-x-4">
+            <span class="text-slate-500">Rule: <strong class="text-amber-400 font-serif">Aṅkānāṁ Vāmato Gatih</strong>
+                (Right-to-Left Digits)</span>
+        </div>
+        <div class="flex items-center space-x-3">
+            <button onclick="prevLevel()" id="prevBtn"
+                class="px-3 py-1.5 rounded bg-slate-900 hover:bg-slate-800 border border-slate-700 disabled:opacity-30 disabled:cursor-not-allowed transition">
+                <i class="fa-solid fa-chevron-left mr-1"></i> Prev
+            </button>
+            <span id="slideCounterText" class="font-mono text-amber-400/90 font-bold px-2">Stage 1 / 20</span>
+            <button onclick="nextLevel()" id="nextBtn"
+                class="px-3 py-1.5 rounded bg-slate-900 hover:bg-slate-800 border border-slate-700 disabled:opacity-30 disabled:cursor-not-allowed transition">
+                Next <i class="fa-solid fa-chevron-right ml-1"></i>
+            </button>
+        </div>
+    </footer>
+
+    <!-- SLIDE-OVER SYMBOL CODEX DRAWER -->
+    <div id="codexDrawer"
+        class="codex-drawer fixed top-0 right-0 h-full w-full max-w-md bg-slate-950/95 border-l border-amber-500/30 z-50 transform translate-x-full shadow-2xl backdrop-blur-2xl flex flex-col justify-between">
+        <div class="p-6 border-b border-slate-800 flex items-center justify-between bg-slate-900/50">
+            <div class="flex items-center space-x-3">
+                <i class="fa-solid fa-scroll text-amber-400 text-xl"></i>
+                <h2 class="font-cinzel text-lg font-bold text-amber-300 tracking-wide">Bhūtasaṃkhyā Codex</h2>
+            </div>
+            <button onclick="closeCodex()"
+                class="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center transition">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <div class="p-6 overflow-y-auto flex-grow space-y-4" id="codexList">
+            <!-- Dynamically populated digit mappings -->
+        </div>
+
+        <div class="p-4 border-t border-slate-800 bg-slate-900/50 text-center text-xs text-slate-500">
+            Click any symbol during gameplay to reveal its numerical equivalent.
+        </div>
+    </div>
+
+    <!-- OVERLAY BACKDROP FOR CODEX -->
+    <div id="codexOverlay" onclick="closeCodex()" class="fixed inset-0 bg-black/60 z-40 hidden transition-opacity">
+    </div>
+
+    <!-- AUDIO SYNTHESIZER & GAME LOGIC SCRIPT -->
+    <script>
+        // ==========================================
+        // 1. CODEX REFERENCE DATA
+        // ==========================================
+        const CODEX_DATA = [
+            { digit: 0, title: "Śūnya / Kha / Ākāśa", entity: "Void, Sky, Space", desc: "The empty, boundless expanse or atmospheric sky.", icon: "fa-circle-notch" },
+            { digit: 1, title: "Īśa / Brahma / Indu / Bhūmi / Ādi", entity: "Lord, Supreme Reality, Moon, Earth, Beginning", desc: "Singular realities, the supreme lord, the moon, and primary beginnings.", icon: "fa-moon" },
+            { digit: 2, title: "Yama / Kara / Caraṇa / Netra / Karṇa / Pakṣa", entity: "Twins, Hands, Feet, Eyes, Ears, Lunar Halves", desc: "Natural pairs, organic dualities, limbs, sensory duals, and lunar halves.", icon: "fa-eye" },
+            { digit: 3, title: "Trimūrti / Guṇa / Loka / Kāla / Agni / Triśūla", entity: "Three Forms, Qualities, Worlds, Time, Fires, Trident", desc: "Sacred triads, cosmic forms, divisions of time, and 3-pronged symbols.", icon: "fa-fire" },
+            { digit: 4, title: "Veda / Yuga / Āśrama / Samudra / Diśā / Pāda", entity: "Vedas, Eras, Life Stages, Oceans, Directions, Quarters", desc: "The four sacred texts, cosmic ages, cardinal directions, and life stages.", icon: "fa-book-open" },
+            { digit: 5, title: "Pāṇḍava / Mahābhūta / Indriya / Tattva / Bāṇa", entity: "Pandavas, Elements, Senses, Fundamental Elements, Arrows", desc: "The five Pandava brothers, primary elements, sensory organs, and Kama's arrows.", icon: "fa-hand" },
+            { digit: 6, title: "R̥tu / Rasa / Darśana / Vedāṅga / Ṣaḍ-darśana", entity: "Seasons, Tastes, Philosophy Schools, Vedangas", desc: "The six Indian seasons, tastes, Vedangas, and classical philosophical systems.", icon: "fa-snowflake" },
+            { digit: 7, title: "R̥ṣi / Svara / Loka / Aśva / Dvīpa / Samudra", entity: "Sages, Musical Notes, Worlds, Sun Horses, Continents, Seas", desc: "The seven sages, musical swaras, sun horses, continents, and oceans.", icon: "fa-star" },
+            { digit: 8, title: "Vasu / Dik / Nāga / Siddhi / Aṣṭāṅga", entity: "Vasus, Directions, Serpent Kings, Powers, Limbs", desc: "The eight elemental Vasus, cardinal directions, serpent kings, and limbs of yoga.", icon: "fa-dragon" },
+            { digit: 9, title: "Ratna / Graha / Navadurgā / Nanda / Aṅka", entity: "Gems, Planets, Durga Forms, Nandas, Digits", desc: "The nine sacred gems, celestial planets, Durga manifestations, and digits.", icon: "fa-globe" }
+        ];
+
+        // ==========================================
+        // 2. FULL 20 GAME LEVELS CONFIGURATION
+        // ==========================================
+        const GAME_LEVELS = [
+            {
+                id: 1,
+                title: "Chamber 1: Sacred Dualities",
+                location: "Ujjain Astronomical Vault",
+                sanskrit: "इन्दु - चरण",
+                shlokaWords: [
+                    { text: "Indu", entity: "Moon", value: 1, desc: "1 Celestial Moon" },
+                    { text: "•", entity: "", value: null },
+                    { text: "Caraṇa", entity: "Feet", value: 2, desc: "2 Sacred Feet" }
+                ],
+                digitsNeeded: 2,
+                solution: [2, 1],
+                lore: "You stand before the obsidian door of the astronomer's vault. Inscribed above the keyway is an ancient two-word verse. Remember the golden rule: digits flow from right to left!",
+                hint: "Indu = 1 (Units). Caraṇa = 2 (Tens). Final Code = 21."
+            },
+            {
+                id: 2,
+                title: "Chamber 2: The Four-Fold Seal",
+                location: "Kerala Temple Archives",
+                sanskrit: "त्रिशूल - कर्णा - पाण्डव - ब्रह्म",
+                shlokaWords: [
+                    { text: "Triśūla", entity: "Trident", value: 3, desc: "3 Trident Prongs" },
+                    { text: "•", entity: "", value: null },
+                    { text: "Karṇa", entity: "Ears", value: 2, desc: "2 Ears" },
+                    { text: "•", entity: "", value: null },
+                    { text: "Pāṇḍava", entity: "Pandavas", value: 5, desc: "5 Heroic Brothers" },
+                    { text: "•", entity: "", value: null },
+                    { text: "Brahma", entity: "Supreme Reality", value: 1, desc: "1 Ultimate Reality" }
+                ],
+                digitsNeeded: 4,
+                solution: [1, 5, 2, 3],
+                lore: "Heavy bronze gears lock the scriptorium containing ancient manuscripts. Solve the 4-part shloka to set the brass wheels in motion.",
+                hint: "Units = Triśūla (3), Tens = Karṇa (2), Hundreds = Pāṇḍava (5), Thousands = Brahma (1). Code = 1523."
+            },
+            {
+                id: 3,
+                title: "Chamber 3: The Vault of Mādhava",
+                location: "Sangamagrama Observatory",
+                sanskrit: "काल - पक्ष - आश्रम - ईश",
+                shlokaWords: [
+                    { text: "Kāla", entity: "Time Divisions", value: 3, desc: "3 Divisions of Time" },
+                    { text: "•", entity: "", value: null },
+                    { text: "Pakṣa", entity: "Lunar Halves", value: 2, desc: "2 Fortnights / Halves" },
+                    { text: "•", entity: "", value: null },
+                    { text: "Āśrama", entity: "Life Stages", value: 4, desc: "4 Life Stages" },
+                    { text: "•", entity: "", value: null },
+                    { text: "Īśa", entity: "Supreme Lord", value: 1, desc: "1 Supreme Lord" }
+                ],
+                digitsNeeded: 4,
+                solution: [1, 4, 2, 3],
+                lore: "This shloka is taken directly from an ancient verse calculating sine tables. Map each term to its value, then place units on the far right.",
+                hint: "Kāla = 3 (Units), Pakṣa = 2 (Tens), Āśrama = 4 (Hundreds), Īśa = 1 (Thousands). Code = 1423."
+            },
+            {
+                id: 4,
+                title: "Chamber 4: The Cosmic Śūnya",
+                location: "Cosmic Sun Dial Chamber",
+                sanskrit: "शून्य - यम - तत्त्व - भूमि",
+                shlokaWords: [
+                    { text: "Śūnya", entity: "Void / Zero", value: 0, desc: "0 Cosmic Void" },
+                    { text: "•", entity: "", value: null },
+                    { text: "Yama", entity: "Twins / Pair", value: 2, desc: "2 Twin Pair" },
+                    { text: "•", entity: "", value: null },
+                    { text: "Tattva", entity: "Elements", value: 5, desc: "5 Fundamental Elements" },
+                    { text: "•", entity: "", value: null },
+                    { text: "Bhūmi", entity: "Earth", value: 1, desc: "1 Earth" }
+                ],
+                digitsNeeded: 4,
+                solution: [1, 5, 2, 0],
+                lore: "The ancient mathematicians embraced zero as Śūnya (the void of the sky). Align the solar rings to open the inner sanctuary.",
+                hint: "Units = Śūnya (0), Tens = Yama (2), Hundreds = Tattva (5), Thousands = Bhūmi (1). Code = 1520."
+            },
+            {
+                id: 5,
+                title: "Chamber 5: The Seven Sages",
+                location: "Saptarishi Sky Tower",
+                sanskrit: "अश्व - Trimūrti - Diśā - Pakṣa",
+                shlokaWords: [
+                    { text: "Aśva", entity: "Sun Horses", value: 7, desc: "7 Horses of the Sun" },
+                    { text: "•", entity: "", value: null },
+                    { text: "Trimūrti", entity: "Three Forms", value: 3, desc: "3 Cosmic Manifestations" },
+                    { text: "•", entity: "", value: null },
+                    { text: "Diśā", entity: "Directions", value: 4, desc: "4 Cardinal Directions" },
+                    { text: "•", entity: "", value: null },
+                    { text: "Pakṣa", entity: "Lunar Halves", value: 2, desc: "2 Fortnights" }
+                ],
+                digitsNeeded: 4,
+                solution: [2, 4, 3, 7],
+                lore: "An astronomical chart reveals the constellation of the seven Sages and the horses of Surya. Decipher the four cosmic categories to unlock the celestial gate.",
+                hint: "Units = Aśva (7), Tens = Trimūrti (3), Hundreds = Diśā (4), Thousands = Pakṣa (2). Code = 2437."
+            },
+            {
+                id: 6,
+                title: "Chamber 6: The Serpent Gateway",
+                location: "Nāgaloka Water Sanctum",
+                sanskrit: "नाग - दर्शन - पाद - आदि",
+                shlokaWords: [
+                    { text: "Nāga", entity: "Serpents", value: 8, desc: "8 Serpent Kings" },
+                    { text: "•", entity: "", value: null },
+                    { text: "Darśana", entity: "Philosophies", value: 6, desc: "6 Philosophical Schools" },
+                    { text: "•", entity: "", value: null },
+                    { text: "Pāda", entity: "Quarters", value: 4, desc: "4 Quarters" },
+                    { text: "•", entity: "", value: null },
+                    { text: "Ādi", entity: "Beginning / One", value: 1, desc: "1 Primal Beginning" }
+                ],
+                digitsNeeded: 4,
+                solution: [1, 4, 6, 8],
+                lore: "Water pours through carved serpent mouths. Map the serpent kings, philosophy schools, and quarters to turn the main sluice valve.",
+                hint: "Units = Nāga (8), Tens = Darśana (6), Hundreds = Pāda (4), Thousands = Ādi (1). Code = 1468."
+            },
+            {
+                id: 7,
+                title: "Chamber 7: Planetary Orbits",
+                location: "Navagraha Celestial Dome",
+                sanskrit: "Ratna - Ṣaḍ-darśana - Mahābhūta - Brahma",
+                shlokaWords: [
+                    { text: "Ratna", entity: "Gems", value: 9, desc: "9 Sacred Gems" },
+                    { text: "•", entity: "", value: null },
+                    { text: "Ṣaḍ-darśana", entity: "Philosophy Systems", value: 6, desc: "6 Systems of Philosophy" },
+                    { text: "•", entity: "", value: null },
+                    { text: "Mahābhūta", entity: "Great Elements", value: 5, desc: "5 Primary Elements" },
+                    { text: "•", entity: "", value: null },
+                    { text: "Brahma", entity: "Supreme One", value: 1, desc: "1 Ultimate Reality" }
+                ],
+                digitsNeeded: 4,
+                solution: [1, 5, 6, 9],
+                lore: "Models of nine planetary gems rotate around a central brass lantern. Align the planetary gears using their elemental and philosophical codes.",
+                hint: "Units = Ratna (9), Tens = Ṣaḍ-darśana (6), Hundreds = Mahābhūta (5), Thousands = Brahma (1). Code = 1569."
+            },
+            {
+                id: 8,
+                title: "Chamber 8: The Season of Tastes",
+                location: "Grand Royal Refectory",
+                sanskrit: "R̥tu - Vedāṅga - Kāla - Karṇa",
+                shlokaWords: [
+                    { text: "R̥tu", entity: "Seasons", value: 6, desc: "6 Seasons" },
+                    { text: "•", entity: "", value: null },
+                    { text: "Vedāṅga", entity: "Vedangas", value: 6, desc: "6 Vedanga Disciplines" },
+                    { text: "•", entity: "", value: null },
+                    { text: "Kāla", entity: "Time Divisions", value: 3, desc: "3 Time Divisions" },
+                    { text: "•", entity: "", value: null },
+                    { text: "Karṇa", entity: "Ears", value: 2, desc: "2 Ears" }
+                ],
+                digitsNeeded: 4,
+                solution: [2, 3, 6, 6],
+                lore: "A stone table features six carved feast bowls and three ritual candles. Match the seasonal and anatomical associations.",
+                hint: "Units = R̥tu (6), Tens = Vedāṅga (6), Hundreds = Kāla (3), Thousands = Karṇa (2). Code = 2366."
+            },
+            {
+                id: 9,
+                title: "Chamber 9: The Eight Directions",
+                location: "Dikpāla Guard Gate",
+                sanskrit: "Dik - Dvīpa - Pāṇḍava - Kha",
+                shlokaWords: [
+                    { text: "Dik", entity: "Directions", value: 8, desc: "8 Cardinal Directions" },
+                    { text: "•", entity: "", value: null },
+                    { text: "Dvīpa", entity: "Continents", value: 7, desc: "7 Traditional Continents" },
+                    { text: "•", entity: "", value: null },
+                    { text: "Pāṇḍava", entity: "Pandavas", value: 5, desc: "5 Brothers" },
+                    { text: "•", entity: "", value: null },
+                    { text: "Kha", entity: "Sky / Zero", value: 0, desc: "0 Atmospheric Void" }
+                ],
+                digitsNeeded: 4,
+                solution: [0, 5, 7, 8],
+                lore: "Eight directional pillars guard this passage. Translate the guardian entities to clear the path forward.",
+                hint: "Units = Dik (8), Tens = Dvīpa (7), Hundreds = Pāṇḍava (5), Thousands = Kha (0). Code = 0578."
+            },
+            {
+                id: 10,
+                title: "Chamber 10: The Vedic Canon",
+                location: "Takshashila Manuscript Vault",
+                sanskrit: "Veda - Samudra - Triśūla - Caraṇa",
+                shlokaWords: [
+                    { text: "Veda", entity: "Texts", value: 4, desc: "4 Sacred Vedas" },
+                    { text: "•", entity: "", value: null },
+                    { text: "Samudra", entity: "Oceans", value: 4, desc: "4 Traditional Oceans" },
+                    { text: "•", entity: "", value: null },
+                    { text: "Triśūla", entity: "Trident", value: 3, desc: "3 Trident Prongs" },
+                    { text: "•", entity: "", value: null },
+                    { text: "Caraṇa", entity: "Feet", value: 2, desc: "2 Feet" }
+                ],
+                digitsNeeded: 4,
+                solution: [2, 3, 4, 4],
+                lore: "Ancient palm-leaf scrolls rest inside silver cylinders. Unlocking the master lock requires deciphering this four-part scriptural rhyme.",
+                hint: "Units = Veda (4), Tens = Samudra (4), Hundreds = Triśūla (3), Thousands = Caraṇa (2). Code = 2344."
+            },
+            {
+                id: 11,
+                title: "Chamber 11: The Musical Swaras",
+                location: "Gandharva Music Hall",
+                sanskrit: "Svara - Trimūrti - Darśana - Īśa",
+                shlokaWords: [
+                    { text: "Svara", entity: "Notes", value: 7, desc: "7 Musical Swaras (Sa Re Ga Ma Pa Dha Ni)" },
+                    { text: "•", entity: "", value: null },
+                    { text: "Trimūrti", entity: "Forms", value: 3, desc: "3 Divine Manifestations" },
+                    { text: "•", entity: "", value: null },
+                    { text: "Darśana", entity: "Philosophies", value: 6, desc: "6 Philosophical Schools" },
+                    { text: "•", entity: "", value: null },
+                    { text: "Īśa", entity: "Supreme Lord", value: 1, desc: "1 Supreme Reality" }
+                ],
+                digitsNeeded: 4,
+                solution: [1, 6, 3, 7],
+                lore: "Resonant bronze bells chime when struck. Play the correct sequence by translating the musical and philosophical terms.",
+                hint: "Units = Svara (7), Tens = Trimūrti (3), Hundreds = Darśana (6), Thousands = Īśa (1). Code = 1637."
+            },
+            {
+                id: 12,
+                title: "Chamber 12: Kama's Arrows",
+                location: "Garden of Whispering Palms",
+                sanskrit: "Bāṇa - Yama - Navadurgā - Śūnya",
+                shlokaWords: [
+                    { text: "Bāṇa", entity: "Arrows", value: 5, desc: "5 Floral Arrows of Kama" },
+                    { text: "•", entity: "", value: null },
+                    { text: "Yama", entity: "Pair", value: 2, desc: "2 Twin Dualities" },
+                    { text: "•", entity: "", value: null },
+                    { text: "Navadurgā", entity: "Durga Forms", value: 9, desc: "9 Manifestations of Durga" },
+                    { text: "•", entity: "", value: null },
+                    { text: "Śūnya", entity: "Void", value: 0, desc: "0 Sky Void" }
+                ],
+                digitsNeeded: 4,
+                solution: [0, 9, 2, 5],
+                lore: "Carved floral arrows point toward keyholes around a central stone lotus. Convert the archery poetic terms to digits.",
+                hint: "Units = Bāṇa (5), Tens = Yama (2), Hundreds = Navadurgā (9), Thousands = Śūnya (0). Code = 0925."
+            },
+            {
+                id: 13,
+                title: "Chamber 13: The Eight Powers",
+                location: "Ashta Siddhi Sanctuary",
+                sanskrit: "Siddhi - Āśrama - Agni - Ādi",
+                shlokaWords: [
+                    { text: "Siddhi", entity: "Mystic Powers", value: 8, desc: "8 Yogic Siddhis" },
+                    { text: "•", entity: "", value: null },
+                    { text: "Āśrama", entity: "Stages of Life", value: 4, desc: "4 Stages of Life" },
+                    { text: "•", entity: "", value: null },
+                    { text: "Agni", entity: "Fires", value: 3, desc: "3 Sacred Altar Fires" },
+                    { text: "•", entity: "", value: null },
+                    { text: "Ādi", entity: "First / Beginning", value: 1, desc: "1 Supreme Source" }
+                ],
+                digitsNeeded: 4,
+                solution: [1, 3, 4, 8],
+                lore: "Eight elemental altars glow softly with blue flame. Convert the Siddhis, Ashramas, and Fires into the master combination.",
+                hint: "Units = Siddhi (8), Tens = Āśrama (4), Hundreds = Agni (3), Thousands = Ādi (1). Code = 1348."
+            },
+            {
+                id: 14,
+                title: "Chamber 14: The Nine Nandas",
+                location: "Nanda Dynasty Treasury",
+                sanskrit: "Nanda - R̥ṣi - Rasa - Kara",
+                shlokaWords: [
+                    { text: "Nanda", entity: "Nanda Kings", value: 9, desc: "9 Historical Nanda Rulers" },
+                    { text: "•", entity: "", value: null },
+                    { text: "R̥ṣi", entity: "Sages", value: 7, desc: "7 Saptarishi Sages" },
+                    { text: "•", entity: "", value: null },
+                    { text: "Rasa", entity: "Tastes", value: 6, desc: "6 Primary Tastes" },
+                    { text: "•", entity: "", value: null },
+                    { text: "Kara", entity: "Hands", value: 2, desc: "2 Hands" }
+                ],
+                digitsNeeded: 4,
+                solution: [2, 6, 7, 9],
+                lore: "An ancient chart maps historical dynasties and philosophy. Translate the symbolic terms to align the brass energy rings.",
+                hint: "Units = Nanda (9), Tens = R̥ṣi (7), Hundreds = Rasa (6), Thousands = Kara (2). Code = 2679."
+            },
+            {
+                id: 15,
+                title: "Chamber 15: The Ocean of Eras",
+                location: "Yugantar Great Clock",
+                sanskrit: "Yuga - Diśā - Pakṣa - Indu",
+                shlokaWords: [
+                    { text: "Yuga", entity: "World Eras", value: 4, desc: "4 Cosmic Eras" },
+                    { text: "•", entity: "", value: null },
+                    { text: "Diśā", entity: "Directions", value: 4, desc: "4 Cardinal Directions" },
+                    { text: "•", entity: "", value: null },
+                    { text: "Pakṣa", entity: "Halves", value: 2, desc: "2 Lunar Fortnights" },
+                    { text: "•", entity: "", value: null },
+                    { text: "Indu", entity: "Moon", value: 1, desc: "1 Singular Moon" }
+                ],
+                digitsNeeded: 4,
+                solution: [1, 2, 4, 4],
+                lore: "A massive water clock counts cosmic ages. Calculate the correct ratio using the eras and direction counts.",
+                hint: "Units = Yuga (4), Tens = Diśā (4), Hundreds = Pakṣa (2), Thousands = Indu (1). Code = 1244."
+            },
+            {
+                id: 16,
+                title: "Chamber 16: The Senses & Elements",
+                location: "Pancha Bhūta Pavilion",
+                sanskrit: "Indriya - Tattva - Yuga - Trimūrti",
+                shlokaWords: [
+                    { text: "Indriya", entity: "Senses", value: 5, desc: "5 Senses" },
+                    { text: "•", entity: "", value: null },
+                    { text: "Tattva", entity: "Elements", value: 5, desc: "5 Elements" },
+                    { text: "•", entity: "", value: null },
+                    { text: "Yuga", entity: "World Eras", value: 4, desc: "4 Eras" },
+                    { text: "•", entity: "", value: null },
+                    { text: "Trimūrti", entity: "Forms", value: 3, desc: "3 Divine Forms" }
+                ],
+                digitsNeeded: 4,
+                solution: [3, 4, 5, 5],
+                lore: "Representations of earth, water, fire, air, and ether line the corridor. Decode the elements and senses to lift the gate.",
+                hint: "Units = Indriya (5), Tens = Tattva (5), Hundreds = Yuga (4), Thousands = Trimūrti (3). Code = 3455."
+            },
+            {
+                id: 17,
+                title: "Chamber 17: The Triad Worlds",
+                location: "Triloka Stupa",
+                sanskrit: "Loka - Kāla - Pakṣa - Ākāśa",
+                shlokaWords: [
+                    { text: "Loka", entity: "Worlds", value: 3, desc: "3 Cosmic Realms" },
+                    { text: "•", entity: "", value: null },
+                    { text: "Kāla", entity: "Time", value: 3, desc: "3 Time Divisions" },
+                    { text: "•", entity: "", value: null },
+                    { text: "Pakṣa", entity: "Lunar Halves", value: 2, desc: "2 Fortnights" },
+                    { text: "•", entity: "", value: null },
+                    { text: "Ākāśa", entity: "Space / Zero", value: 0, desc: "0 Atmospheric Void" }
+                ],
+                digitsNeeded: 4,
+                solution: [0, 2, 3, 3],
+                lore: "A three-tiered stupa towers overhead. Match the world realms and spatial terms to release the locking pin.",
+                hint: "Units = Loka (3), Tens = Kāla (3), Hundreds = Pakṣa (2), Thousands = Ākāśa (0). Code = 0233."
+            },
+            {
+                id: 18,
+                title: "Chamber 18: Aryabhata's Cipher",
+                location: "Aryabhata Math Lab",
+                sanskrit: "Aṅka - Aṣṭāṅga - R̥ṣi - Darśana",
+                shlokaWords: [
+                    { text: "Aṅka", entity: "Digits", value: 9, desc: "9 Primary Digits" },
+                    { text: "•", entity: "", value: null },
+                    { text: "Aṣṭāṅga", entity: "Limbs of Yoga", value: 8, desc: "8 Limbs of Yoga" },
+                    { text: "•", entity: "", value: null },
+                    { text: "R̥ṣi", entity: "Sages", value: 7, desc: "7 Saptarishi Sages" },
+                    { text: "•", entity: "", value: null },
+                    { text: "Darśana", entity: "Philosophies", value: 6, desc: "6 Philosophical Systems" }
+                ],
+                digitsNeeded: 4,
+                solution: [6, 7, 8, 9],
+                lore: "A descending mathematical sequence is carved into marble floor tiles. Compute the values from right to left.",
+                hint: "Units = Aṅka (9), Tens = Aṣṭāṅga (8), Hundreds = R̥ṣi (7), Thousands = Darśana (6). Code = 6789."
+            },
+            {
+                id: 19,
+                title: "Chamber 19: The Solar Eclipse",
+                location: "Surya Eclipse Tower",
+                sanskrit: "Īśa - Yama - Pāṇḍava - Graha",
+                shlokaWords: [
+                    { text: "Īśa", entity: "Lord / One", value: 1, desc: "1 Supreme Lord" },
+                    { text: "•", entity: "", value: null },
+                    { text: "Yama", entity: "Pairs", value: 2, desc: "2 Twin Dualities" },
+                    { text: "•", entity: "", value: null },
+                    { text: "Pāṇḍava", entity: "Pandavas", value: 5, desc: "5 Brothers" },
+                    { text: "•", entity: "", value: null },
+                    { text: "Graha", entity: "Planets", value: 9, desc: "9 Planets" }
+                ],
+                digitsNeeded: 4,
+                solution: [9, 5, 2, 1],
+                lore: "Shadows fall across the central dial as an eclipse aligns. Input the solar and planetary values to unlock the penumbra door.",
+                hint: "Units = Īśa (1), Tens = Yama (2), Hundreds = Pāṇḍava (5), Thousands = Graha (9). Code = 9521."
+            },
+            {
+                id: 20,
+                title: "Chamber 20: The Apex Sanctorum",
+                location: "The Golden Kerala Treasury",
+                sanskrit: "Kha - Vedāṅga - Dvīpa - Pāda - Brahma",
+                shlokaWords: [
+                    { text: "Kha", entity: "Space / Zero", value: 0, desc: "0 Void" },
+                    { text: "•", entity: "", value: null },
+                    { text: "Vedāṅga", entity: "Vedangas", value: 6, desc: "6 Vedanga Disciplines" },
+                    { text: "•", entity: "", value: null },
+                    { text: "Dvīpa", entity: "Continents", value: 7, desc: "7 Continents" },
+                    { text: "•", entity: "", value: null },
+                    { text: "Pāda", entity: "Quarters", value: 4, desc: "4 Quarters" },
+                    { text: "•", entity: "", value: null },
+                    { text: "Brahma", entity: "Supreme One", value: 1, desc: "1 Ultimate Reality" }
+                ],
+                digitsNeeded: 5,
+                solution: [1, 4, 7, 6, 0],
+                lore: "The final 5-digit master lock shields the ultimate treasury of ancient Indian mathematical secrets! Decipher all five terms.",
+                hint: "Units = Kha (0), Tens = Vedāṅga (6), Hundreds = Dvīpa (7), Thousands = Pāda (4), Ten-Thousands = Brahma (1). Code = 14760."
+            }
+        ];
+
+        // ==========================================
+        // 3. ENHANCED MULTI-SOUND SYNTHESIZER & AMBIENT BGM
+        // ==========================================
+        let currentLevelIdx = 0;
+        let currentDials = [];
+        let isAudioOn = true;
+        let isBGMOn = false;
+        let audioCtx = null;
+        let activeExplosion = false;
+        let bgmOscillators = [];
+        let bgmGainNode = null;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        function playSound(type) {
+            if (!isAudioOn) return;
+            initAudio();
+            if (!audioCtx) return;
+
+            const now = audioCtx.currentTime;
+
+            if (type === 'dial') {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(320, now);
+                osc.frequency.exponentialRampToValueAtTime(640, now + 0.04);
+                gain.gain.setValueAtTime(0.12, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.04);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start(now);
+                osc.stop(now + 0.04);
+            } else if (type === 'word') {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(587.33, now);
+                osc.frequency.exponentialRampToValueAtTime(880, now + 0.15);
+                gain.gain.setValueAtTime(0.15, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start(now);
+                osc.stop(now + 0.25);
+            } else if (type === 'success') {
+                const notes = [440, 554.37, 659.25, 880, 1108.73];
+                notes.forEach((freq, idx) => {
+                    const subOsc = audioCtx.createOscillator();
+                    const subGain = audioCtx.createGain();
+                    subOsc.type = 'sine';
+                    subOsc.frequency.value = freq;
+                    subOsc.connect(subGain);
+                    subGain.connect(audioCtx.destination);
+
+                    const startTime = now + (idx * 0.09);
+                    subGain.gain.setValueAtTime(0.2, startTime);
+                    subGain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.7);
+                    subOsc.start(startTime);
+                    subOsc.stop(startTime + 0.7);
+                });
+            } else if (type === 'error') {
+                const osc1 = audioCtx.createOscillator();
+                const osc2 = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+
+                osc1.type = 'sawtooth';
+                osc2.type = 'square';
+
+                osc1.frequency.setValueAtTime(130, now);
+                osc2.frequency.setValueAtTime(138, now);
+
+                gain.gain.setValueAtTime(0.25, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
+
+                osc1.connect(gain);
+                osc2.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                osc1.start(now);
+                osc2.start(now);
+                osc1.stop(now + 0.35);
+                osc2.stop(now + 0.35);
+            } else if (type === 'grand_fanfare') {
+                // Sacred Majestic Victory Melody (Tanpura & Bell Harmonics Synthesizer)
+                const celebrationMelody = [
+                    { f: 293.66, d: 0.4 }, { f: 369.99, d: 0.4 }, { f: 440.00, d: 0.4 },
+                    { f: 587.33, d: 0.8 }, { f: 554.37, d: 0.4 }, { f: 587.33, d: 1.2 }
+                ];
+                celebrationMelody.forEach((n, i) => {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'triangle';
+                    osc.frequency.value = n.f;
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+
+                    const startTime = now + (i * 0.35);
+                    gain.gain.setValueAtTime(0.3, startTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, startTime + n.d);
+                    osc.start(startTime);
+                    osc.stop(startTime + n.d);
+                });
+            } else if (type === 'click') {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(500, now);
+                gain.gain.setValueAtTime(0.1, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.04);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start(now);
+                osc.stop(now + 0.04);
+            }
+        }
+
+        // Peaceful Sacred Temple Drone Music Generator
+        function startPeacefulBGM() {
+            initAudio();
+            if (!audioCtx) return;
+
+            stopPeacefulBGM(); // Reset existing drones if any
+
+            bgmGainNode = audioCtx.createGain();
+            bgmGainNode.gain.setValueAtTime(0.01, audioCtx.currentTime);
+            bgmGainNode.gain.exponentialRampToValueAtTime(0.08, audioCtx.currentTime + 3); // Soft fade-in
+            bgmGainNode.connect(audioCtx.destination);
+
+            // Sacred Meditative D-Major Tanpura Drone Frequencies (D2, A2, D3, F#3)
+            const freqs = [73.42, 110.00, 146.83, 185.00];
+            bgmOscillators = freqs.map(freq => {
+                const osc = audioCtx.createOscillator();
+                osc.type = 'sine';
+                osc.frequency.value = freq;
+                osc.connect(bgmGainNode);
+                osc.start();
+                return osc;
+            });
+        }
+
+        function stopPeacefulBGM() {
+            if (bgmGainNode && audioCtx) {
+                bgmGainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 1);
+                setTimeout(() => {
+                    bgmOscillators.forEach(osc => osc.stop());
+                    bgmOscillators = [];
+                }, 1000);
+            }
+        }
+
+        function toggleBGM() {
+            isBGMOn = !isBGMOn;
+            document.getElementById('bgmIcon').className = isBGMOn ? "fa-solid fa-music text-amber-400 animate-pulse" : "fa-solid fa-music text-slate-500";
+            document.getElementById('bgmLabel').innerText = isBGMOn ? "Ambient Music ON" : "Ambient Music OFF";
+
+            if (isBGMOn) {
+                startPeacefulBGM();
+            } else {
+                stopPeacefulBGM();
+            }
+        }
+
+        function toggleAudio() {
+            isAudioOn = !isAudioOn;
+            document.getElementById('soundIcon').className = isAudioOn ? "fa-solid fa-volume-high text-amber-400" : "fa-solid fa-volume-xmark text-slate-500";
+            document.getElementById('soundLabel').innerText = isAudioOn ? "SFX ON" : "Muted";
+            if (isAudioOn) playSound('click');
+        }
+
+        // ==========================================
+        // 4. RENDER STAGE & UI
+        // ==========================================
+        function renderStage() {
+            const stage = GAME_LEVELS[currentLevelIdx];
+            const container = document.getElementById('gameSlideStage');
+
+            currentDials = new Array(stage.digitsNeeded).fill(0);
+
+            document.getElementById('slideCounterText').innerText = `Stage ${currentLevelIdx + 1} / ${GAME_LEVELS.length}`;
+            document.getElementById('prevBtn').disabled = (currentLevelIdx === 0);
+            document.getElementById('nextBtn').disabled = (currentLevelIdx === GAME_LEVELS.length - 1);
+
+            renderProgressDots();
+
+            container.innerHTML = `
+                <div class="px-8 py-4 border-b border-slate-800 bg-slate-950/60 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                        <div class="flex items-center space-x-2 text-xs text-amber-400/80 font-mono tracking-widest uppercase mb-1">
+                            <span><i class="fa-solid fa-location-dot mr-1"></i> ${stage.location}</span>
+                        </div>
+                        <h2 class="font-cinzel text-xl md:text-2xl font-bold text-amber-300 tracking-wide">${stage.title}</h2>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <button onclick="toggleHint()" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 text-xs flex items-center space-x-2 transition">
+                            <i class="fa-solid fa-lightbulb text-amber-400"></i>
+                            <span>Reveal Hint</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="p-6 md:p-8 grid grid-cols-1 lg:grid-cols-12 gap-8 flex-grow items-center">
+                    
+                    <div class="lg:col-span-6 flex flex-col justify-between space-y-5">
+                        <div class="bg-slate-950/50 border border-slate-800 p-4 md:p-5 rounded-xl text-slate-300 text-xs md:text-sm leading-relaxed">
+                            <p>${stage.lore}</p>
+                        </div>
+
+                        <div class="bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 border border-amber-500/30 p-5 md:p-6 rounded-2xl shadow-xl active-pulse relative">
+                            <div class="absolute -top-3 left-6 px-3 py-0.5 bg-amber-500/20 border border-amber-500/40 rounded-full text-[10px] font-bold text-amber-300 uppercase tracking-widest">
+                                Inscribed Shloka Verse
+                            </div>
+
+                            <div class="text-center py-3 my-1 text-2xl md:text-3xl font-yatra text-amber-400 tracking-widest gold-glow overflow-x-auto">
+                                ${stage.sanskrit}
+                            </div>
+
+                            <div class="mt-3 pt-3 border-t border-slate-800/80">
+                                <p class="text-[11px] text-slate-400 mb-2 text-center uppercase tracking-wider font-semibold">
+                                    Click words below to inspect symbol meanings:
+                                </p>
+                                <div class="flex flex-wrap items-center justify-center gap-2">
+                                    ${stage.shlokaWords.map((item, i) => {
+                if (!item.value && item.value !== 0) {
+                    return `<span class="text-slate-600 font-bold px-1">${item.text}</span>`;
+                }
+                return `
+                                            <button onclick="inspectWord(${i})" class="word-tag px-2.5 py-1 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-300 font-cinzel font-bold text-xs flex items-center space-x-1">
+                                                <span>${item.text}</span>
+                                                <i class="fa-solid fa-circle-info text-[9px] opacity-70"></i>
+                                            </button>
+                                        `;
+            }).join('')}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="inspectorBox" class="min-h-[60px] bg-slate-950/80 border border-slate-800 rounded-xl p-3 flex items-center justify-center text-center text-xs text-slate-400 italic">
+                            Select a Sanskrit word above to view its Bhūtasaṃkhyā numerical translation.
+                        </div>
+                    </div>
+
+                    <div class="lg:col-span-6 flex flex-col items-center justify-center space-y-6">
+                        <div id="lockMechanismBox" class="w-full bg-slate-950/80 border border-slate-800 p-5 md:p-7 rounded-2xl shadow-2xl relative flex flex-col items-center justify-center transition-all duration-300">
+                            
+                            <div class="text-center mb-5">
+                                <span class="text-xs text-amber-400/80 font-mono uppercase tracking-widest">Ancient Vault Combination Lock</span>
+                                <p class="text-xs text-slate-400 mt-1">
+                                    Set lock digits starting from <strong class="text-amber-300">Far Right (Units)</strong>
+                                </p>
+                            </div>
+
+                            <div class="flex flex-wrap items-center justify-center gap-2 md:gap-3 my-2" id="dialsWrapper">
+                                ${currentDials.map((val, idx) => `
+                                    <div class="flex flex-col items-center">
+                                        <span class="text-[9px] font-mono text-slate-500 uppercase mb-1">
+                                            ${getPositionLabel(idx, currentDials.length)}
+                                        </span>
+
+                                        <div id="lockSlot_${idx}" class="lock-slot w-14 h-22 md:w-16 md:h-26 rounded-xl border-2 border-slate-700 flex flex-col items-center justify-between p-1.5 shadow-inner">
+                                            <button onclick="spinDial(${idx}, 1)" class="w-full text-slate-400 hover:text-amber-400 py-0.5 transition text-xs">
+                                                <i class="fa-solid fa-chevron-up"></i>
+                                            </button>
+
+                                            <span id="dialVal_${idx}" class="font-cinzel text-2xl md:text-3xl font-bold text-amber-400 my-auto gold-glow">
+                                                ${val}
+                                            </span>
+
+                                            <button onclick="spinDial(${idx}, -1)" class="w-full text-slate-400 hover:text-amber-400 py-0.5 transition text-xs">
+                                                <i class="fa-solid fa-chevron-down"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+
+                            <div class="w-full max-w-xs flex items-center justify-between mt-5 text-[10px] font-mono text-amber-400/80 border-t border-slate-800/80 pt-2.5">
+                                <span>High Digits</span>
+                                <span class="flex items-center font-bold text-amber-300">
+                                    <i class="fa-solid fa-arrow-left mr-1"></i> Order (Right to Left)
+                                </span>
+                                <span>Units</span>
+                            </div>
+
+                            <button onclick="checkSolution()" class="btn-shimmer mt-5 w-full max-w-xs py-3 rounded-xl font-cinzel font-bold text-slate-950 text-xs md:text-sm tracking-wider uppercase shadow-lg flex items-center justify-center space-x-2">
+                                <i class="fa-solid fa-key"></i>
+                                <span>Trigger Gear Mechanism</span>
+                            </button>
+
+                        </div>
+                    </div>
+
+                </div>
+
+                <div id="hintModal" class="hidden absolute inset-0 bg-slate-950/90 backdrop-blur-md z-30 p-8 flex flex-col items-center justify-center text-center">
+                    <div class="max-w-md bg-slate-900 border border-amber-500/40 p-6 rounded-2xl shadow-2xl space-y-4">
+                        <i class="fa-solid fa-lightbulb text-amber-400 text-3xl"></i>
+                        <h3 class="font-cinzel text-lg font-bold text-amber-300">Cryptographer's Hint</h3>
+                        <p class="text-sm text-slate-300 leading-relaxed">${stage.hint}</p>
+                        <button onclick="toggleHint()" class="px-5 py-2 bg-amber-500 text-slate-950 rounded-lg font-bold text-xs uppercase tracking-wider">
+                            Got It
+                        </button>
+                    </div>
+                </div>
+
+                <div id="successOverlay" class="hidden absolute inset-0 bg-slate-950/95 backdrop-blur-xl z-30 p-8 flex flex-col items-center justify-center text-center space-y-6">
+                    <div class="w-20 h-20 rounded-full bg-amber-500/20 border-2 border-amber-400 flex items-center justify-center text-amber-400 text-4xl shadow-2xl gold-glow animate-bounce">
+                        <i class="fa-solid fa-unlock-keyhole"></i>
+                    </div>
+                    <div class="space-y-2">
+                        <span class="text-xs font-mono text-amber-400 uppercase tracking-widest">Vault Unlocked!</span>
+                        <h3 class="font-cinzel text-3xl font-bold text-amber-300">${stage.title} Cleared</h3>
+                        <p class="text-sm text-slate-300 max-w-lg mx-auto">
+                            The heavy stone mechanism shifts with a resonant click, revealing lost mathematical scriptures!
+                        </p>
+                    </div>
+                    <button onclick="proceedAfterSuccess()" class="btn-shimmer px-8 py-3 rounded-xl font-cinzel font-bold text-slate-950 text-sm tracking-wider uppercase shadow-xl flex items-center space-x-2">
+                        <span>Continue to Next Vault</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            `;
+        }
+
+        // ==========================================
+        // 5. INTERACTIVE ACTIONS & GAME LOGIC
+        // ==========================================
+        function getPositionLabel(idx, total) {
+            const labelsFromRight = ["Units", "Tens", "Hundreds", "Thousands", "10-Thousands"];
+            const posFromRight = total - 1 - idx;
+            return labelsFromRight[posFromRight] || `10^${posFromRight}`;
+        }
+
+        function spinDial(idx, dir) {
+            playSound('dial');
+            currentDials[idx] = (currentDials[idx] + dir + 10) % 10;
+
+            const dialElement = document.getElementById(`dialVal_${idx}`);
+            const slotElement = document.getElementById(`lockSlot_${idx}`);
+
+            dialElement.innerText = currentDials[idx];
+
+            slotElement.classList.add(dir > 0 ? 'dial-spin-up' : 'dial-spin-down');
+            setTimeout(() => {
+                slotElement.classList.remove('dial-spin-up', 'dial-spin-down');
+            }, 150);
+        }
+
+        function inspectWord(wordIdx) {
+            playSound('word');
+            const stage = GAME_LEVELS[currentLevelIdx];
+            const item = stage.shlokaWords[wordIdx];
+            const inspector = document.getElementById('inspectorBox');
+
+            inspector.innerHTML = `
+                <div class="flex items-center space-x-3 text-left w-full">
+                    <div class="w-9 h-9 rounded-lg bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-300 font-cinzel font-bold text-base flex-shrink-0">
+                        ${item.value}
+                    </div>
+                    <div>
+                        <div class="text-xs font-bold text-amber-300">${item.text} = ${item.entity} (${item.value})</div>
+                        <div class="text-[11px] text-slate-400">${item.desc}</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function toggleHint() {
+            playSound('word');
+            const hintModal = document.getElementById('hintModal');
+            hintModal.classList.toggle('hidden');
+        }
+
+        function checkSolution() {
+            const stage = GAME_LEVELS[currentLevelIdx];
+            const isCorrect = currentDials.every((val, i) => val === stage.solution[i]);
+
+            if (isCorrect) {
+                playSound('success');
+                activeExplosion = true;
+
+                // If it's the final chamber (Level 20), trigger grand celebration immediately
+                if (currentLevelIdx === GAME_LEVELS.length - 1) {
+                    setTimeout(() => {
+                        renderGrandFinale();
+                    }, 800);
+                } else {
+                    document.getElementById('successOverlay').classList.remove('hidden');
+                }
+
+                setTimeout(() => { activeExplosion = false; }, 3000);
+            } else {
+                playSound('error');
+
+                const redOverlay = document.getElementById('redFlashOverlay');
+                const lockBox = document.getElementById('lockMechanismBox');
+                const stageContainer = document.getElementById('gameSlideStage');
+
+                redOverlay.style.opacity = '1';
+                lockBox.classList.add('animate-shake', 'animate-red-alert');
+                stageContainer.classList.add('border-red-500/60');
+
+                setTimeout(() => {
+                    redOverlay.style.opacity = '0';
+                    lockBox.classList.remove('animate-shake', 'animate-red-alert');
+                    stageContainer.classList.remove('border-red-500/60');
+                }, 600);
+
+                const inspector = document.getElementById('inspectorBox');
+                inspector.innerHTML = `
+                    <span class="text-red-400 font-semibold text-xs">
+                        <i class="fa-solid fa-triangle-exclamation mr-1"></i> Combination incorrect! Remember: Place the 1st word's value in the Units place (far right).
+                    </span>
+                `;
+            }
+        }
+
+        function proceedAfterSuccess() {
+            playSound('click');
+            if (currentLevelIdx < GAME_LEVELS.length - 1) {
+                currentLevelIdx++;
+                renderStage();
+            } else {
+                renderGrandFinale();
+            }
+        }
+
+        function prevLevel() {
+            if (currentLevelIdx > 0) {
+                playSound('click');
+                currentLevelIdx--;
+                renderStage();
+            }
+        }
+
+        function nextLevel() {
+            if (currentLevelIdx < GAME_LEVELS.length - 1) {
+                playSound('click');
+                currentLevelIdx++;
+                renderStage();
+            }
+        }
+
+        function renderProgressDots() {
+            const container = document.getElementById('levelProgressContainer');
+            container.innerHTML = GAME_LEVELS.map((lvl, i) => `
+                <button onclick="jumpToLevel(${i})" class="w-6 h-6 rounded-full text-[10px] font-bold transition flex-shrink-0 flex items-center justify-center ${i === currentLevelIdx
+                    ? 'bg-amber-500 text-slate-950 font-bold shadow-md'
+                    : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
+                }">
+                    ${i + 1}
+                </button>
+            `).join('');
+
+            const activeDot = container.children[currentLevelIdx];
+            if (activeDot) {
+                activeDot.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+            }
+        }
+
+        function jumpToLevel(idx) {
+            playSound('click');
+            currentLevelIdx = idx;
+            renderStage();
+        }
+
+        // ==========================================
+        // 6. GRAND FINALE VICTORY CELEBRATION
+        // ==========================================
+        function renderGrandFinale() {
+            playSound('grand_fanfare');
+
+            // Auto-start peaceful music drone for celebration ambience if off
+            if (!isBGMOn) {
+                toggleBGM();
+            }
+
+            // Launch Canvas Golden Confetti Celebration
+            if (typeof confetti === 'function') {
+                const duration = 3.5 * 1000;
+                const end = Date.now() + duration;
+
+                (function frame() {
+                    confetti({
+                        particleCount: 5,
+                        angle: 60,
+                        spread: 55,
+                        origin: { x: 0 },
+                        colors: ['#fbbf24', '#f59e0b', '#d97706', '#ffffff']
+                    });
+                    confetti({
+                        particleCount: 5,
+                        angle: 120,
+                        spread: 55,
+                        origin: { x: 1 },
+                        colors: ['#fbbf24', '#f59e0b', '#d97706', '#ffffff']
+                    });
+
+                    if (Date.now() < end) {
+                        requestAnimationFrame(frame);
+                    }
+                })();
+            }
+
+            const container = document.getElementById('gameSlideStage');
+            container.innerHTML = `
+                <div class="p-8 md:p-12 text-center flex flex-col items-center justify-center min-h-[580px] space-y-6 relative overflow-hidden bg-gradient-to-b from-slate-950 via-amber-950/20 to-slate-950">
+                    
+                    <div class="w-28 h-28 rounded-full bg-amber-500/20 border-2 border-amber-400 flex items-center justify-center text-amber-400 text-6xl shadow-2xl divine-pulse">
+                        𑁍
+                    </div>
+
+                    <div class="space-y-3 max-w-2xl">
+                        <div class="inline-block px-4 py-1 rounded-full bg-amber-500/20 border border-amber-500/40 text-amber-300 font-mono text-xs font-bold uppercase tracking-widest mb-2">
+                            🏆 Vault 20 Cleared - Cryptographer Grandmaster
+                        </div>
+                        <h2 class="font-cinzel text-3xl md:text-5xl font-extrabold text-amber-300 gold-glow">
+                            CHAMBER CLEARED!
+                        </h2>
+                        <h3 class="font-cinzel text-lg md:text-xl text-amber-400/90 tracking-wide font-semibold">
+                            All 20 Ancient Bhūtasaṃkhyā Cryptograms Deciphered
+                        </h3>
+                        <p class="text-slate-300 text-xs md:text-sm leading-relaxed max-w-xl mx-auto pt-2">
+                            You have unlocked the Apex Sanctorum! By mastering <strong>Aṅkānāṁ Vāmato Gatih</strong> (Right-to-Left digit flow), you have restored the ancient mathematical wisdom of Kerala and Ujjain.
+                        </p>
+                    </div>
+
+                    <div class="flex flex-wrap items-center justify-center gap-4 pt-4">
+                        <button onclick="jumpToLevel(0)" class="btn-shimmer px-8 py-3.5 rounded-xl font-cinzel font-bold text-slate-950 text-xs md:text-sm tracking-wider uppercase shadow-2xl flex items-center space-x-2">
+                            <i class="fa-solid fa-rotate-right mr-2"></i>
+                            <span>Replay Cryptogram Deck</span>
+                        </button>
+                    </div>
+
+                </div>
+            `;
+        }
+
+        // ==========================================
+        // 7. CODEX DRAWER LOGIC
+        // ==========================================
+        function populateCodex() {
+            const list = document.getElementById('codexList');
+            list.innerHTML = CODEX_DATA.map(item => `
+                <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 flex items-start space-x-4 hover:border-amber-500/40 transition">
+                    <div class="w-10 h-10 rounded-lg bg-amber-500/10 border border-amber-500/30 flex-shrink-0 flex items-center justify-center">
+                        <span class="font-cinzel text-base font-bold text-amber-400">${item.digit}</span>
+                    </div>
+                    <div>
+                        <h4 class="font-cinzel font-bold text-amber-300 text-xs">${item.title}</h4>
+                        <span class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block my-0.5">${item.entity}</span>
+                        <p class="text-xs text-slate-400 mt-1 leading-relaxed">${item.desc}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function openCodex() {
+            playSound('word');
+            document.getElementById('codexDrawer').classList.remove('translate-x-full');
+            document.getElementById('codexOverlay').classList.remove('hidden');
+        }
+
+        function closeCodex() {
+            playSound('click');
+            document.getElementById('codexDrawer').classList.add('translate-x-full');
+            document.getElementById('codexOverlay').classList.add('hidden');
+        }
+
+        // ==========================================
+        // 8. DYNAMIC PARTICLES & EXPLOSION ENGINE
+        // ==========================================
+        function initCanvasParticles() {
+            const canvas = document.getElementById('particleCanvas');
+            const ctx = canvas.getContext('2d');
+            let width = canvas.width = window.innerWidth;
+            let height = canvas.height = window.innerHeight;
+
+            window.addEventListener('resize', () => {
+                width = canvas.width = window.innerWidth;
+                height = canvas.height = window.innerHeight;
+            });
+
+            const particles = Array.from({ length: 50 }, () => ({
+                x: Math.random() * width,
+                y: Math.random() * height,
+                radius: Math.random() * 2 + 0.5,
+                alpha: Math.random() * 0.5 + 0.1,
+                speedY: -(Math.random() * 0.3 + 0.1),
+                speedX: (Math.random() - 0.5) * 0.2
+            }));
+
+            function animate() {
+                ctx.clearRect(0, 0, width, height);
+
+                particles.forEach(p => {
+                    p.y += p.speedY;
+                    p.x += p.speedX;
+
+                    if (activeExplosion) {
+                        p.radius = Math.random() * 4 + 1;
+                        p.alpha = Math.random() * 0.9 + 0.1;
+                    } else if (p.radius > 2.5) {
+                        p.radius = Math.random() * 2 + 0.5;
+                    }
+
+                    if (p.y < 0) p.y = height;
+                    if (p.x < 0 || p.x > width) p.x = Math.random() * width;
+
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = activeExplosion ? `rgba(251, 191, 36, ${p.alpha})` : `rgba(245, 158, 11, ${p.alpha})`;
+                    ctx.fill();
+                });
+
+                requestAnimationFrame(animate);
+            }
+            animate();
+        }
+
+        // Initialize Application
+        window.addEventListener('DOMContentLoaded', () => {
+            populateCodex();
+            renderStage();
+            initCanvasParticles();
+        });
+    </script>
+</body>
+
+</html>
